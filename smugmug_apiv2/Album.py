@@ -10,12 +10,12 @@ from smugmug_apiv2 import Node
 def GenericAlbum(function, album): return process_uri("/api/v2/album/" + album + ("!" + function if function != None else ""))
 
 def AlbumComments(album): return GenericAlbum("albumcomments",album)
-def AlbumDownload(album): return GenericAlbum("",album)
-def AlbumGeoMedia(album): return GenericAlbum("",album)
-def AlbumHighlightImage(album): return GenericAlbum("",album)
-def AlbumImages(album): return GenericAlbum("",album)
-def AlbumPopularMedia(album): return GenericAlbum("",album)
-def AlbumPrices(album): return GenericAlbum("",album)
+def AlbumDownload(album): return GenericAlbum("download",album)
+def AlbumGeoMedia(album): return GenericAlbum("geomedia",album)
+def AlbumHighlightImage(album): return GenericAlbum("highlightimage",album)
+def AlbumImages(album): return GenericAlbum("images",album)
+def AlbumPopularMedia(album): return GenericAlbum("popularmedia",album)
+def AlbumPrices(album): return GenericAlbum("prices",album)
 # Folder
 # HighlightImage
 def Node(album):
