@@ -5,7 +5,9 @@ import json
 import os
 import logging
 
-from smugmug_apiv2.utils import create_logger, get_service, get_tokens, authorize, process_uri, node_recurse
+from smugmug_apiv2.utils import create_logger, get_service, get_tokens, authorize, process_uri
+from smugmug_apiv2.tools import node_recurse
+
 from smugmug_apiv2 import User
 from smugmug_apiv2 import UserProfile
 from smugmug_apiv2 import Node
@@ -39,7 +41,7 @@ def main():
     logger.info("User=" + user)
     logger.info("Uri=" + uri)
 
-    node_recurse(node_uri,0)
+    node_recurse(node_uri)
     
 if __name__ == '__main__':
     main()

@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
+
 from rauth import OAuth1Session
-import sys,json,os,logging
+import sys
+import json
+import os
+import logging
 
 from common import API_ORIGIN, get_service, add_auth_params
+from smugmug_apiv2.utils import process_uri,session,logger
 
-def process_album(album_uri):
+def process_album(album_uri,indent=0):
+    logger = logger()
     logger.debug(album_uri)
     api_album = process(album_uri)
     logger.debug(json.dumps(api_album, sort_keys=True, indent=4, separators=(',', ': ')))
@@ -20,80 +26,93 @@ def process_album(album_uri):
             
     return 0
                     
-def node_recurse(node_uri,depth):
-    global logger
-    
-    # logger.info(node_uri + " " + str(depth))
+def process_node_folder(node_folder,depth=0):
+    l = logger()
     indent = '\t' * depth
+    l.debug(node_folder['Node']['Type'] + " " + node_folder['Node']['UrlName'])
+    # A folder can contain 0 or more other folders
+    # A folder can contain 0 or more albums
 
-    logger.debug(indent + API_ORIGIN + node_uri)
-    api_node = session.get(
-        API_ORIGIN + node_uri,
-        headers={'Accept': 'application/json'}).json()
-    logger.debug(json.dumps(api_node, sort_keys=True, indent=4, separators=(',', ': ')))
+    try:
+        childnodes_uri = node_folder['Node']['Uris']['ChildNodes']['Uri']
+    except:
+        l.error(json.dumps(api_node, sort_keys=True, indent=4, separators=(',', ': ')))
+        sys.exit("ugh - child nodes")
 
-    # childnodes_uri = api_node['Response']['Node']['Uris']['ChildNodes']['Uri'] + "?count=999"
-    childnodes_uri = api_node['Response']['Node']['Uris']['ChildNodes']['Uri']
-
-    logger.debug(indent + API_ORIGIN + childnodes_uri)
-    api_childnodes = session.get(
-        API_ORIGIN + childnodes_uri,
-        headers={'Accept': 'application/json'}).json()
-    logger.debug(json.dumps(api_childnodes, sort_keys=True, indent=4, separators=(',', ': ')))
-
+    # There may be alot of chold nodes.  Let's group them together    
     all_nodes = get_all_nodes(childnodes_uri)
+        
+    if all_nodes is None:
+        return
+
+    # Process Folders first
+    l.debug("Processing " + str(len(all_nodes)) + " nodes")
+    count = 0
     for childnode in all_nodes:
-        logger.debug(json.dumps(childnode, sort_keys=True, indent=4, separators=(',', ': ')))
-        logger.info(indent + childnode['Type'] + " '" + childnode['Name'] + "'")
+        count = count + 1
+        type = childnode['Type']
+        l.debug(count)
+        l.debug(type)
+        l.debug(childnode['Name'])
         
-        if childnode['Type'] == "Album":
-            process_album(childnode['Uris']['Album']['Uri'])
+        if type == "Album":
+            l.info(indent + childnode['Type'] + " '" + childnode['Name'] + "'")
+            # We have a node and not an album
+            #album_uri = process_uri(childnode['Uri']['Node']['Uris']['Album']['Uri'])
+            #process_album(album_uri)
+        else:
+            l.debug(indent + type + " '" + childnode['Name'] + "' skip")
             
-        if childnode['HasChildren']:
+    count = 0
+    for childnode in all_nodes:
+        count = count + 1
+        l.debug(count)
+
+        if childnode['Type'] == "Folder":
+            l.info(indent + childnode['Type'] + " '" + childnode['Name'] + "'")
             node_recurse(childnode['Uri'],depth+1)
-
-    return 1
-
-def folder_recurse(albums_uri,folders_uri,depth):
-    # logger.info(albums_uri + " " + folders_uri + " " + str(depth))
+        else:
+            l.debug(indent + childnode['Type'] + " '" + childnode['Name'] + "' skip")
+    
+def process_node_album(node_album,depth=0):
+    l = logger()
     indent = '\t' * depth
-    logger.info(albums_uri);
-    logger.info(folders_uri);
-    
-    api_folderalbums = session.get(
-        API_ORIGIN + albums_uri,
-        headers={'Accept': 'application/json'}).json()
-    api_userfolders = session.get(
-        API_ORIGIN + folders_uri,
-        headers={'Accept': 'application/json'}).json()
+    l.debug(node_album['Node']['Type'] + " " + node_album['Node']['UrlName'])
+    album_uri = process_uri(node_album['Uri'])['Node']['Uris']['Album']['Uri']
+    process_album(album_uri)
 
-    # 1) Dump the list of albums
-    # 2) Traverse the sub folders
-    
-    # logger.info(albums_uri)
-    #logger.info(json.dumps(api_folderalbums, sort_keys=True, indent=4, separators=(',', ': ')))
-    try:
-        for album in api_folderalbums['Response']['Album']:
-            logger.info(indent + "'" + album["Name"] + "' "+ str(album["ImageCount"]))
-            logger.info(json.dumps(album, sort_keys=True, indent=4, separators=(',', ': ')))
-    except KeyError:
-        logger.debug(indent + "No albums")
-    
-    # logger.info(indent + folders_uri)
-    try:
-        for folder in api_userfolders['Response']['Folder']:
-            logger.info(indent + "Folder " + folder['Name'] + " (" + folder['UrlName'] + ")")
-            logger.debug(json.dumps(folder, sort_keys=True, indent=4, separators=(',', ': ')))
+def node_recurse(node_uri,depth=0):
+    l = logger()
 
-            # Get the list of Albums and Folders in this folder
-            uri_new_albums = folder['Uris']['FolderAlbums']['Uri'] 
-            uri_new_folders = folder['Uris']['Folders']['Uri'] 
-            
-            # Recursively traverse the folder/album structure
-            folder_recurse(uri_new_albums,uri_new_folders,depth+1)
-    except KeyError:
-        pass
-        #logger.info("No sub-folders")
-        #logger.info(json.dumps(api_userfolders, sort_keys=True, indent=4, separators=(',', ': ')))
+    l.debug(node_uri + " " + str(depth))
+    indent = '\t' * depth
+    
+    api_node = process_uri(node_uri)
+    if api_node['Node']['Type'] == "Folder":
+        process_node_folder(api_node,depth)
+    elif api_node['Node']['Type'] == "Album":
+        process_node_album(api_node,depth)
+    else:
+        l.debug(api_node['Node']['Type'] + " " + api_node['Node']['UrlName'])
+    
+def get_all_nodes(node_uri):
+    l = logger()
+
+    api_nodes = process_uri(node_uri)
+    if 'Node' in api_nodes:
+        nodes = api_nodes['Node']
+    else:
+        return None
+
+    try:
+        while ('NextPage' in api_nodes['Pages']):
+            node_uri = api_nodes['Pages']['NextPage']
+            api_nodes = process_uri(node_uri)
+            l.debug("Appending " + str(len(api_nodes['Node'])) + " to " + str(len(nodes)))
+        nodes = nodes + api_nodes['Node']
+    except:
+        l.error(json.dumps(api_nodes, sort_keys=True, indent=4, separators=(',', ': ')))
+        l.error(str(api_nodes['Code']) + " - " + api_nodes['Message'])
         
-    return 1
+    #logger.warn(node_uri + " has " + str(len(nodes)) + " children")
+    return nodes
