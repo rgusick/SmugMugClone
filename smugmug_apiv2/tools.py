@@ -9,7 +9,14 @@ import logging
 from common import API_ORIGIN, get_service, add_auth_params
 from smugmug_apiv2.utils import process_uri,session,logger
 
-def process_album(album_uri):
+def mkdir(dirname):
+    l = logger()
+    if (os.path.isdir(dirname)):
+        l.debug(dirname + " already exists")
+    else:
+        l.info("mkdir " + dirname)
+
+def process_album(album_uri,dirname=''):
     l = logger()
     l.debug(album_uri)
 
@@ -23,16 +30,17 @@ def process_album(album_uri):
     if 'AlbumImage' in images:
         for image in images['AlbumImage']:
             try:
-                l.info("\t\t" + image['FileName'])
+                l.info(dirname + image['FileName'])
             except:
                 l.error(json.dumps(image, sort_keys=True, indent=4, separators=(',', ': ')))
             
     return 0
                     
-def process_node_folder(node_folder,depth=0):
+def process_node_folder(node_folder,depth=0,dirname=''):
     #
     # A SmugMug Folder can contain other Folders or Albums, which are retrived as a list of ChildNodes
     #
+    basedir = dirname
 
     l = logger()
     indent = '\t' * depth
@@ -63,39 +71,48 @@ def process_node_folder(node_folder,depth=0):
         type = childnode['Type']
         
         if type == "Album":
-            l.info(indent + type  + " '" + childnode['Name'] + "'")
+            l.info(dirname + indent + type  + " '" + childnode['Name'] + "'")
+            dirname = basedir + childnode['UrlName'] + "/"
             # We have a node and not an album
             album_uri = childnode['Uris']['Album']['Uri']
             l.info(album_uri)
-            process_album(album_uri)
+            process_album(album_uri,dirname)
         elif type == "Node":
-            l.info(indent + type  + " '" + childnode['Name'] + "'")
-            node_recurse(childnode['Uri'],depth+1)
+            l.info(dirname + indent + type  + " '" + childnode['Name'] + "'")
+            dirname = basedir + childnode['UrlName'] + "/"
+            mkdir(dirname)
+            node_recurse(childnode['Uri'],depth+1,dirname)
         elif type == "Folder":
-            l.info(indent + type  + " '" + childnode['Name'] + "'")
+            l.info(dirname + indent + type  + " '" + childnode['Name'] + "'")
             folder = process_uri(childnode['Uri'])
-            process_node_folder(folder,depth+1)
+            dirname = basedir + childnode['UrlName'] + "/"
+            mkdir(dirname)
+            process_node_folder(folder,depth+1,dirname)
         else:
             l.warning(indent + type + " '" + childnode['Name'] + "' (UNKNOWN)")
             
-def process_node_album(node_album,depth=0):
+def process_node_album(node_album,depth=0,dirname=''):
     l = logger()
     indent = '\t' * depth
-    l.debug(node_album['Node']['Type'] + " " + node_album['Node']['UrlName'])
+    mkdir(dirname)
+    l.debug(dirname + " " + node_album['Node']['Type'] + " " + node_album['Node']['UrlName'])
     album_uri = process_uri(node_album['Uri'])['Node']['Uris']['Album']['Uri']
-    process_album(album_uri)
+    process_album(album_uri,dirname)
 
-def node_recurse(node_uri,depth=0):
+def node_recurse(node_uri,depth=0,dirname=''):
     l = logger()
 
-    l.debug(node_uri + " " + str(depth))
+    l.debug(dirname + " " + node_uri + " " + str(depth))
     indent = '\t' * depth
     
     api_node = process_uri(node_uri)
     if api_node['Node']['Type'] == "Folder":
-        process_node_folder(api_node,depth)
+        dirname = dirname + api_node['Node']['UrlName'] + "/"
+        mkdir(dirname)
+        process_node_folder(api_node,depth,dirname)
     elif api_node['Node']['Type'] == "Album":
-        process_node_album(api_node,depth)
+        mkdir(dirname)
+        process_node_album(api_node,depth,dirname)
     else:
         l.debug(api_node['Node']['Type'] + " " + api_node['Node']['UrlName'])
     

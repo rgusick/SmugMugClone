@@ -27,7 +27,10 @@ def authorize(consumer_key,consumer_secret,access_token,access_token_secret):
     return session
 
 def logger_dir(logfilename):
-    # Reverse order of priority
+    # Order of priority
+    if logfilename.count('/') > 0:
+        return logfilename
+    
     candidates = [ "/var/log" , "/usr/local/log" , os.environ["HOME"] , "." , "/tmp" ]
     ret = logfilename
     for logdir in reversed(candidates):
@@ -44,11 +47,11 @@ def create_logger(filename):
     global logger
     
     logger = logging.getLogger(filename)
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.DEBUG)
 
     # create file handler which logs even debug messages
     fh = logging.FileHandler(logger_dir(filename), mode='w')
-    fh.setLevel(logging.INFO)
+    fh.setLevel(logging.DEBUG)
 
     # create console handler with a higher log level
     # ch = logger().StreamHandler(stream=sys.stdout)

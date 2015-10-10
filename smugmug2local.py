@@ -16,13 +16,16 @@ from smugmug_apiv2 import Album
 
 def main():
     parser = argparse.ArgumentParser(description='Sync a SmugMug account to local disk')
-    parser.add_argument('--download',
-                        help='SmugMug download dir')
+    parser.add_argument("-d",'--download', default="/volume1/photo/smugmug/", help='SmugMug download dir')
+    parser.add_argument("-l",'--logfile', default='~/smugmug.log', help='Logfile name')
     args = parser.parse_args()
-    if args.download:
-        print (args.download)
-
-    logger = create_logger("smugmug.log")
+    if args.download.endswith('/'):
+        args.download = args.download[:-1]
+    if not os.path.isdir(args.download):
+        sys.exit(args.download + " is not a directory")
+        
+    # print ("Logging to " + args.logfile)
+    logger = create_logger(args.logfile)
 
     service = get_service()
     at, ats = get_tokens(os.environ["HOME"] + '/.smugmug.json')
@@ -49,7 +52,7 @@ def main():
     logger.info("User=" + user)
     logger.info("Uri=" + uri)
 
-    node_recurse(node_uri)
+    node_recurse(node_uri, dirname=args.download )
     
 if __name__ == '__main__':
     main()
