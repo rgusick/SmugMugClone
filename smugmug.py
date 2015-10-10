@@ -4,6 +4,7 @@ import sys
 import json
 import os
 import logging
+import argparse
 
 from smugmug_apiv2.utils import create_logger, get_service, get_tokens, authorize, process_uri
 from smugmug_apiv2.tools import node_recurse
@@ -14,6 +15,13 @@ from smugmug_apiv2 import Node
 from smugmug_apiv2 import Album
 
 def main():
+    parser = argparse.ArgumentParser(description='Sync a SmugMug account to local disk')
+    parser.add_argument('--download',
+                        help='SmugMug download dir')
+    args = parser.parse_args()
+    if args.download:
+        print (args.download)
+
     logger = create_logger("smugmug.log")
 
     service = get_service()

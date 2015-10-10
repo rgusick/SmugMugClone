@@ -44,11 +44,11 @@ def create_logger(filename):
     global logger
     
     logger = logging.getLogger(filename)
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
 
     # create file handler which logs even debug messages
     fh = logging.FileHandler(logger_dir(filename), mode='w')
-    fh.setLevel(logging.DEBUG)
+    fh.setLevel(logging.INFO)
 
     # create console handler with a higher log level
     # ch = logger().StreamHandler(stream=sys.stdout)
