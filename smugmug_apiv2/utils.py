@@ -47,11 +47,11 @@ def create_logger(filename):
     global logger
     
     logger = logging.getLogger(filename)
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
 
     # create file handler which logs even debug messages
     fh = logging.FileHandler(logger_dir(filename), mode='w')
-    fh.setLevel(logging.DEBUG)
+    fh.setLevel(logging.INFO)
 
     # create console handler with a higher log level
     # ch = logger().StreamHandler(stream=sys.stdout)
@@ -78,7 +78,9 @@ def create_logger(filename):
 def get_tokens(filename):
     try:
         with open(filename) as data_file:
-            at, ats = json.load(data_file)
+            atdict = json.load(data_file)
+            at = atdict['token']
+            ats = atdict['token_secret']
     except:
         """This example interacts with its user through the console, but it is
         similar in principle to the way any non-web-based application can obtain an
@@ -108,7 +110,7 @@ def get_tokens(filename):
         at, ats = service.get_access_token(rt, rts, params={'oauth_verifier': verifier})
 
         with open(filename, 'w') as outfile:
-            json.dump([at, ats], outfile, sort_keys=True,indent=4, separators=(',', ': '))
+            json.dump({'token':at, 'token_secret':ats}, outfile, sort_keys=True,indent=4, separators=(',', ': '))
         
     return at, ats
 

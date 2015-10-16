@@ -28,7 +28,7 @@ def main():
     logger = create_logger(args.logfile)
 
     service = get_service()
-    at, ats = get_tokens(os.environ["HOME"] + '/.smugmug.json')
+    at, ats = get_tokens(os.environ["HOME"] + '/.smugmug')
 
     # The access token we have received is valid forever, unless the user
     # revokes it.  Let's make one example API request to show that the access
@@ -53,6 +53,7 @@ def main():
     logger.info("Uri=" + uri)
 
     node_recurse(node_uri, dirname=args.download )
+    logger.info("Done!")
     
 if __name__ == '__main__':
     main()
