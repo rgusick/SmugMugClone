@@ -46,7 +46,7 @@ def create_logger(filename):
     # create logger
     global logger
     
-    logger = logging.getLogger(filename)
+    logger = logging.getLogger('SmugMugClone')
     logger.setLevel(logging.INFO)
 
     # create file handler which logs even debug messages
