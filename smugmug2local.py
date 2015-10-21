@@ -28,11 +28,11 @@ def main():
     user = sm.User
     
     # Just to see that we can...
-    bio = user.BioImage()
+    bio = user.getBioImage_dict()
     
     nickname = user.getNickName()
     uri = user.getUri()
-    node_uri = user.uriNode()['Uri']
+    node_uri = user.getNode_uri()['Uri']
     node = Node(node_uri)
 
     logger.info("User=" + nickname)

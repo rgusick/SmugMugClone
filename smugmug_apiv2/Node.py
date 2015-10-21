@@ -31,45 +31,45 @@ class Node(SmugMugBase):
             
     ###########################
 
-    # def GenericNode(self,function,node): return process_uri(self.URI + node + ("!" + function if function != None else ""))
-
-    def ChildNodes(self,node): return self.GenericField("children",node)
-    # FolderById
-    # HighlighImage
-    def ParentNode(self,node): return self.GenericField("parent",node)
-    def ParentNodes(self,node): return self.GenericField("parentnodes",node)
-    def User(self,nickname = None): return self.User.Generic("",nickname)
-
     ###########################
     # Access elements of Node
     ###########################
 
-    #def GetGenericNode(self,field,result = None):
-    #    if result == None:
-    #        result = self.OBJECT
-    #    assert 'Node' in result
-    #    assert field in result['Node']
-    #    return result['Node'][field]
+    def getUri(self,result = None): return self.getGenericField('Uri',result)
+    def getUriDescription(self,result = None): return self.getGenericField('UriDescription',result)
+    def getResponseLevel(self,result = None): return self.getGenericField('ResponseLevel',result)
+    def getDateAdded(self,result = None): return self.getGenericField('DateAdded',result)
+    def getDateModified(self,result = None): return self.getGenericField('DateModified',result)
+    def getDescription(self,result = None): return self.getGenericField('Description',result)
+    def getEffectiveSecurityType(self,result = None): return self.getGenericField('EffectiveSecurityType',result)
+    def getHasChildren(self,result = None): return self.getGenericField('HasChildren',result)
+    def getIsRoot(self,result = None): return self.getGenericField('IsRoot',result)
+    def getKeywords(self,result = None): return self.getGenericField('Keywords',result)
+    def getName(self,result = None): return self.getGenericField('Name',result)
+    def getNodeID(self,result = None): return self.getGenericField('NodeID',result)
+    def getPasswordHint(self,result = None): return self.getGenericField('PasswordHint',result)
+    def getSecurityType(self,result = None): return self.getGenericField('SecurityType',result)
+    def getSortDirection(self,result = None): return self.getGenericField('SortDirection',result)
+    def getSortIndex(self,result = None): return self.getGenericField('SortIndex',result)
+    def getSortMethod(self,result = None): return self.getGenericField('SortMethod',result)
+    def getType(self,result = None): return self.getGenericField('Type',result)
+    def getUrlName(self,result = None): return self.getGenericField('UrlName',result)
+    def getUrlPath(self,result = None): return self.getGenericField('UrlPath',result)
+    def getWebUri(self,result = None): return self.getGenericField('WebUri',result)
+    def getUris(self,result = None): return self.getGenericField('Uris',result)
+
+    # Uri Funtions
     
-    def getUri(self,result = None): return self.GetGenericField('Uri',result)
-    def getUriDescription(self,result = None): return self.GetGenericField('UriDescription',result)
-    def getResponseLevel(self,result = None): return self.GetGenericField('ResponseLevel',result)
-    def getDateAdded(self,result = None): return self.GetGenericField('DateAdded',result)
-    def getDateModified(self,result = None): return self.GetGenericField('DateModified',result)
-    def getDescription(self,result = None): return self.GetGenericField('Description',result)
-    def getEffectiveSecurityType(self,result = None): return self.GetGenericField('EffectiveSecurityType',result)
-    def getHasChildren(self,result = None): return self.GetGenericField('HasChildren',result)
-    def getIsRoot(self,result = None): return self.GetGenericField('IsRoot',result)
-    def getKeywords(self,result = None): return self.GetGenericField('Keywords',result)
-    def getName(self,result = None): return self.GetGenericField('Name',result)
-    def getNodeID(self,result = None): return self.GetGenericField('NodeID',result)
-    def getPasswordHint(self,result = None): return self.GetGenericField('PasswordHint',result)
-    def getSecurityType(self,result = None): return self.GetGenericField('SecurityType',result)
-    def getSortDirection(self,result = None): return self.GetGenericField('SortDirection',result)
-    def getSortIndex(self,result = None): return self.GetGenericField('SortIndex',result)
-    def getSortMethod(self,result = None): return self.GetGenericField('SortMethod',result)
-    def getType(self,result = None): return self.GetGenericField('Type',result)
-    def getUrlName(self,result = None): return self.GetGenericField('UrlName',result)
-    def getUrlPath(self,result = None): return self.GetGenericField('UrlPath',result)
-    def getWebUri(self,result = None): return self.GetGenericField('WebUri',result)
-    def getUris(self,result = None): return self.GetGenericField('Uris',result)
+    def getChildNodes_uri(self): return self.getGenericUris("ChildNodes")
+    # FolderById
+    # HighlighImage
+    def getParentNode_uri(self): return self.getGenericUris("ParentNode")
+    def getParentNodes_uri(self): return self.getGenericUris("ParentNoded")
+    def getUser_uri(self): return self.getGenericUris("User")
+
+    def getChildNodes_dict(self): return self.getGenericUriObject("ChildNodes")
+    # FolderById
+    # HighlighImage
+    def getParentNode_dict(self): return self.getGenericUriObject("ParentNode")
+    def getParentNodes_dict(self): return self.getGenericUriObject("ParentNoded")
+    def getUser_dict(self): return self.getGenericUriObject("User")

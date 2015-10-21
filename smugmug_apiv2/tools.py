@@ -16,9 +16,26 @@ from smugmug_apiv2.utils import process_uri,session,logger
 from smugmug_apiv2.User import User
 from smugmug_apiv2.Node import Node
 from smugmug_apiv2.Album import Album
+# from smugmug_apiv2.Image import Image
+# from smugmug_apiv2.Folder import Folder
 
 logger = logging.getLogger('SmugMugClone')
 
+def factory(dictionary):
+    r = dictionary['Response']
+    if r == 'User':
+        return User(dictionary)
+    elif r == 'Node':
+        return Node(dictionary)
+    elif r == 'Album':
+        return Album(dictionary)
+    elif r == 'Image':
+        return Image(dictionary)
+    elif r == 'Folder':
+        return Folder(dictionary)
+    else:
+        raise NotImplementedError(r)
+        
 def forcetime(file_or_dir,datetime_string):
     t = time.strptime(datetime_string, '%Y-%m-%dT%H:%M:%S+00:00')
     dt = int(time.mktime(t))

@@ -24,55 +24,48 @@ class Album(SmugMugBase):
             self.OBJECT = process_uri(uri)
             
     ###########################
-    # def GenericAlbum(self,function, album): return process_uri("/api/v2/album/" + album + ("!" + function if function != None else ""))
-
-    def AlbumComments(self,album): return self.GenericField("albumcomments",album)
-    def AlbumDownload(self,album): return self.GenericField("download",album)
-    def AlbumGeoMedia(self,album): return self.GenericField("geomedia",album)
-    def AlbumHighlightImage(self,album): return self.GenericField("highlightimage",album)
-    def AlbumImages(self,album): return self.GetGenericUriObject("images",album)
-    def AlbumPopularMedia(self,album): return self.GenericField("popularmedia",album)
-    def AlbumPrices(self,album): return self.GenericField("prices",album)
-    # Folder
-    # HighlightImage
-    def Node(self,album):
-        ret = self.GenericField(None,album)
-        return Node(self.GenericNode(None, ret['NodeId']))
-    # ParentFolder
-    def User(self,nickname = None): return User.getNickName()
-
-    ###########################
     # Access elements of Node
     ###########################
 
-    #def GetGenericAlbum(self,field,result = None):
-    #    if result == None:
-    #        result = self.ALBUM
-    #    assert 'Album' in result
-    #    assert field in result['Album']
-    #    return result['Album'][field]
-    
-    def getUri(self,result = None): return self.GetGenericField('Uri',result)
-    def getUriDescription(self,result = None): return self.GetGenericField('UriDescription',result)
-    def getResponseLevel(self,result = None): return self.GetGenericField('ResponseLevel',result)
-    def getAllowDownloads(self,result = None): return self.GetGenericField('AllowDownloads',result)
-    def getCanShare(self,result = None): return self.GetGenericField('CanShare',result)
-    def getDescription(self,result = None): return self.GetGenericField('Description',result)
-    def getExternal(self,result = None): return self.GetGenericField('External',result)
-    def getImageCount(self,result = None): return self.GetGenericField('ImageCount',result)
-    def getImagesLastUpdated(self,result = None): return self.GetGenericField('ImagesLastUpdated',result)
-    def getKeywords(self,result = None): return self.GetGenericField('Keywords',result)
-    def getLastUpdated(self,result = None): return self.GetGenericField('LastUpdated',result)
-    def getName(self,result = None): return self.GetGenericField('Name',result)
-    def getNiceName(self,result = None): return self.GetGenericField('NiceName',result)
-    def getNodeID(self,result = None): return self.GetGenericField('NodeID',result)
-    def getPasswordHint(self,result = None): return self.GetGenericField('PasswordHint',result)
-    def getProtected(self,result = None): return self.GetGenericField('Protected',result)
-    def getSecurityType(self,result = None): return self.GetGenericField('SecurityType',result)
-    def getSortDirection(self,result = None): return self.GetGenericField('SortDirection',result)
-    def getSortMethod(self,result = None): return self.GetGenericField('SortMethod',result)
-    def getTitle(self,result = None): return self.GetGenericField('Title',result)
-    def getUrlName(self,result = None): return self.GetGenericField('UrlName',result)
-    def getUrlPath(self,result = None): return self.GetGenericField('UrlPath',result)
-    def getWebUri(self,result = None): return self.GetGenericField('WebUri',result)
-    def getUris(self,result = None): return self.GetGenericField('Uris',result)
+    def getUri(self,result = None): return self.getGenericField('Uri',result)
+    def getUriDescription(self,result = None): return self.getGenericField('UriDescription',result)
+    def getResponseLevel(self,result = None): return self.getGenericField('ResponseLevel',result)
+    def getAllowDownloads(self,result = None): return self.getGenericField('AllowDownloads',result)
+    def getCanShare(self,result = None): return self.getGenericField('CanShare',result)
+    def getDescription(self,result = None): return self.getGenericField('Description',result)
+    def getExternal(self,result = None): return self.getGenericField('External',result)
+    def getImageCount(self,result = None): return self.getGenericField('ImageCount',result)
+    def getImagesLastUpdated(self,result = None): return self.getGenericField('ImagesLastUpdated',result)
+    def getKeywords(self,result = None): return self.getGenericField('Keywords',result)
+    def getLastUpdated(self,result = None): return self.getGenericField('LastUpdated',result)
+    def getName(self,result = None): return self.getGenericField('Name',result)
+    def getNiceName(self,result = None): return self.getGenericField('NiceName',result)
+    def getNodeID(self,result = None): return self.getGenericField('NodeID',result)
+    def getPasswordHint(self,result = None): return self.getGenericField('PasswordHint',result)
+    def getProtected(self,result = None): return self.getGenericField('Protected',result)
+    def getSecurityType(self,result = None): return self.getGenericField('SecurityType',result)
+    def getSortDirection(self,result = None): return self.getGenericField('SortDirection',result)
+    def getSortMethod(self,result = None): return self.getGenericField('SortMethod',result)
+    def getTitle(self,result = None): return self.getGenericField('Title',result)
+    def getUrlName(self,result = None): return self.getGenericField('UrlName',result)
+    def getUrlPath(self,result = None): return self.getGenericField('UrlPath',result)
+    def getWebUri(self,result = None): return self.getGenericField('WebUri',result)
+    def getUris(self,result = None): return self.getGenericField('Uris',result)
+
+    ###########################
+    # def GenericAlbum(self,function, album): return process_uri("/api/v2/album/" + album + ("!" + function if function != None else ""))
+
+    def getAlbumComments_dict(self,album): return self.GenericField("albumcomments",album)
+    def getAlbumDownload_dict(self,album): return self.GenericField("download",album)
+    def getAlbumGeoMedia_dict(self,album): return self.GenericField("geomedia",album)
+    def getAlbumHighlightImage_dict(self,album): return self.GenericField("highlightimage",album)
+    def getAlbumImages_dict(self): return self.getGenericUriObject("images")
+    def getAlbumPopularMedia_dict(self,album): return self.GenericField("popularmedia",album)
+    def getAlbumPrices_dict(self,album): return self.GenericField("prices",album)
+    # Folder
+    # HighlightImage
+    def getNode_dict(self,album):
+        ret = self.GenericField(None,album)
+        return Node(self.GenericNode(None, ret['NodeId']))
+    # ParentFolder
+    def getUser_dict(self,nickname = None): return User.getNickName()
